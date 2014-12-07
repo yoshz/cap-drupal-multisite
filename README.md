@@ -42,6 +42,8 @@ Add the following configuration to your `config/deploy.rb`:
     set :drupal_path, "public"
     # List of all sites in the sites directory
     set :drupal_sites, %w{default site2}
+    # Group owner of the assets files
+    set :drupal_group, "www-data"
 
 You have to specify an own settings.php file for each site and each stage like:
 

@@ -4,6 +4,7 @@ namespace :load do
     set :drush, "drush"
     set :drupal_path, "public"
     set :drupal_sites, %w{default}
+    set :drupal_group, "www-data"
   end
 end
 
@@ -21,6 +22,8 @@ namespace :drupal do
     on roles(:all) do
       fetch(:drupal_sites).each do |site|
         execute "mkdir", "-p #{shared_path}/#{site}/files #{shared_path}/#{site}/private"
+        execute "chmod", "2775 #{shared_path}/#{site}/files #{shared_path}/#{site}/private"
+        execute "chgrp", "-R #{fetch(:drupal_group)} #{shared_path}/#{site}/files #{shared_path}/#{site}/private"
         execute "ln", "-nfs #{shared_path}/#{site}/files #{release_path}/#{fetch(:drupal_path)}/sites/#{site}/files"
         execute "ln", "-nfs #{shared_path}/#{site}/private #{release_path}/#{fetch(:drupal_path)}/sites/#{site}/private"
         #execute :drush, "-l #{site} -r #{release_path}/#{fetch(:drupal_path)} vset --yes file_directory_path sites/#{site}/files"
