@@ -6,9 +6,10 @@ Various capistrano tasks to deploy and maintain drupal sites.
 It currently only works with Drupal 7.x and Capistrano 3.x.
 
 Features:
-* Support for multisite configuration
-* Automatically symlink files directory
-* Integration of some basic Drush tasks
+* Specify and upload settings.php file for each site and stage.
+* Automatically symlinking `files` and `private` directory for each site.
+* Integration of some basic Drush tasks.
+* Synchronize assets and database.
 
 
 Installation
@@ -16,7 +17,12 @@ Installation
 
 Add it as gem to `Gemfile`:
 
-    gem 'capistrano-drupal-multisite', :path => 'vendor/capistrano-drupal-multisite'
+    source 'https://rubygems.org'
+    group :development do
+        gem "capistrano", '~> 3.0.0'
+        gem "capistrano-ext"
+        gem 'cap-drupal-multisite', :git => 'https://github.com/yoshz/cap-drupal-multisite.git'
+    end
 
 Install using 'bundle':
 
@@ -37,19 +43,40 @@ Add the following configuration to your `config/deploy.rb`:
     # List of all sites in the sites directory
     set :drupal_sites, %w{default site2}
 
+You have to specify an own settings.php file for each site and each stage like:
+
+    config/<stage>/settings.<site>.php
+
+You also have to specify an own sites.php for each stage like:
+
+    config/<stage>/sites.php
+
 
 Usage
 -----
 
-The following tasks will be executed after each deployment:
+Add to following additional optional deploy hooks to your `config/deploy.rb`:
 
-    drupal:symlink          # symlink files directory
-    drupal:cache_clear      # clears all caches
-    drupal:feature_revert   # reverts all features
+    namespace :deploy do
+        after :publishing, "drupal:cache_clear"     # clears all caches
+        after :publishing, "drupal:updatedb"        # updates all databases
+        after :publishing, "drupal:feature_revert"  # reverts all features
+    end
 
 Display a list of all available tasks:
 
     bundle exec cap -T
+    cap drupal:assets:download         # Download assets from <remote>:shared_path to <local>:files/ and <local>:private/ for each site
+    cap drupal:assets:upload           # Upload assets from <local>:files/ and <local>:private/ to <remote>:shared_path for each site
+    cap drupal:cache_clear             # Clear all caches
+    cap drupal:db:download             # Download database dumps from <remote>:release_path to <local>:db/
+    cap drupal:db:dump                 # Dump database for each site to <remote>:release_path
+    cap drupal:db:restore              # Restore database for each site from dump in <remote>:release_path
+    cap drupal:db:upload               # Upload database dumps from <local>:db/ to <remote>:release_path
+    cap drupal:feature_revert          # Revert all features
+    cap drupal:symlink                 # Symlink shared directories
+    cap drupal:updatedb                # Apply any database updates required
+    cap drupal:upload_settings         # Upload settings
 
 
 Bugs & Feedback
@@ -65,3 +92,4 @@ Most of the code is inspired by other projects like:
 
 * [antistatique/capdrupal](https://github.com/antistatique/capdrupal)
 * [mathieue/cap-drupal](https://github.com/mathieue/cap-drupal)
+* [sgruhier/capistrano-db-tasks](https://github.com/sgruhier/capistrano-db-tasks)
