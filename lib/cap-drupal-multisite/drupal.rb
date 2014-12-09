@@ -8,12 +8,6 @@ namespace :load do
   end
 end
 
-# Set deploy hooks
-namespace :deploy do
-  after :updating, "drupal:symlink"
-  after :updating, "drupal:upload_settings"
-end
-
 # Specific Drupal tasks
 namespace :drupal do
 
@@ -145,4 +139,10 @@ namespace :drupal do
       end
     end
   end
+end
+
+# Set deploy hooks
+namespace :deploy do
+  after :updating, "drupal:symlink"
+  after :updating, "drupal:upload_settings"
 end
