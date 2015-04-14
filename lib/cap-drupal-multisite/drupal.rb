@@ -114,8 +114,8 @@ namespace :drupal do
       on roles(:all) do |server|
         fetch(:drupal_sites).each do |site|
           puts "Downloading files of #{site} from #{server}"
-          system("sshpass -p#{server.password} rsync -a --del -L -K --rsh='ssh -p #{server.port}' #{server.user}@#{server.hostname}:#{shared_path}/#{site}/files/ sites/#{site}/files")
-          system("sshpass -p#{server.password} rsync -a --del -L -K --rsh='ssh -p #{server.port}' #{server.user}@#{server.hostname}:#{shared_path}/#{site}/private/ sites/#{site}/private")
+          system("sshpass -p#{server.password} rsync -rut --del -L -K --rsh='ssh -p #{server.port}' #{server.user}@#{server.hostname}:#{shared_path}/#{site}/files/ sites/#{site}/files")
+          system("sshpass -p#{server.password} rsync -rut --del -L -K --rsh='ssh -p #{server.port}' #{server.user}@#{server.hostname}:#{shared_path}/#{site}/private/ sites/#{site}/private")
         end
       end
     end
@@ -125,8 +125,8 @@ namespace :drupal do
       on roles(:all) do |server|
         fetch(:drupal_sites).each do |site|
           puts "Uploading files of #{site} to #{server}"
-          system("sshpass -p#{server.password} rsync -a --del -L -K --rsh='ssh -p #{server.port}' sites/#{site}/files/ #{server.user}@#{server.hostname}:#{shared_path}/#{site}/files")
-          system("sshpass -p#{server.password} rsync -a --del -L -K --rsh='ssh -p #{server.port}' sites/#{site}/private/ #{server.user}@#{server.hostname}:#{shared_path}/#{site}/private")
+          system("sshpass -p#{server.password} rsync -rut --del -L -K --rsh='ssh -p #{server.port}' sites/#{site}/files/ #{server.user}@#{server.hostname}:#{shared_path}/#{site}/files")
+          system("sshpass -p#{server.password} rsync -rut --del -L -K --rsh='ssh -p #{server.port}' sites/#{site}/private/ #{server.user}@#{server.hostname}:#{shared_path}/#{site}/private")
         end
       end
     end
