@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |spec|
   spec.name        = "cap-drupal-multisite"
-  spec.version     = "0.1.0"
+  spec.version     = "0.2.0"
   spec.authors     = ["Yosh de Vos"]
   spec.email       = ["yosh@elzorro.nl"]
   spec.homepage    = "https://github.com/yoshz/cap-drupal-multisite"
