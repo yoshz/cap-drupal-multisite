@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |spec|
   spec.name        = "cap-drupal-multisite"
-  spec.version     = "0.2.0"
+  spec.version     = "0.3.0"
   spec.authors     = ["Yosh de Vos"]
   spec.email       = ["yosh@elzorro.nl"]
   spec.homepage    = "https://github.com/yoshz/cap-drupal-multisite"
@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "capistrano", ">= 3.2.1"
+  spec.add_dependency "capistrano", "~> 3.3.5"
   spec.add_dependency "sshkit", ">= 1.4.0"
   spec.add_dependency "colorize"
   spec.add_dependency "highline"

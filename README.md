@@ -19,9 +19,9 @@ Add it as gem to `Gemfile`:
 
     source 'https://rubygems.org'
     group :development do
-        gem "capistrano", '~> 3.0.0'
+        gem "capistrano", '~> 3.3.5'
         gem "capistrano-ext"
-        gem 'cap-drupal-multisite', :git => 'https://github.com/yoshz/cap-drupal-multisite.git'
+        gem 'cap-drupal-multisite'
     end
 
 Install using 'bundle':
