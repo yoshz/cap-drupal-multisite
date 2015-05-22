@@ -5,6 +5,7 @@ namespace :load do
     set :drupal_path, "public"
     set :drupal_sites, %w{default}
     set :drupal_group, "www-data"
+    set :drupal_rsync_exclude, "--exclude=/languages --exclude=/styles --exclude=/js --exclude=/css"
   end
 end
 
@@ -114,23 +115,24 @@ namespace :drupal do
       on roles(:all) do |server|
         fetch(:drupal_sites).each do |site|
           puts "Downloading files of #{site} from #{server}"
-          system("sshpass -p#{server.password} rsync -rut --del -L -K --rsh='ssh -p #{server.port}' #{server.user}@#{server.hostname}:#{shared_path}/#{site}/files/ sites/#{site}/files")
-          system("sshpass -p#{server.password} rsync -rut --del -L -K --rsh='ssh -p #{server.port}' #{server.user}@#{server.hostname}:#{shared_path}/#{site}/private/ sites/#{site}/private")
+          system("sshpass -p#{server.password} rsync -rut --del -L -K #{fetch(:drupal_rsync_exclude)} --rsh='ssh -p #{server.port}' #{server.user}@#{server.hostname}:#{shared_path}/#{site}/files/ sites/#{site}/files")
+          system("sshpass -p#{server.password} rsync -rut --del -L -K #{fetch(:drupal_rsync_exclude)} --rsh='ssh -p #{server.port}' #{server.user}@#{server.hostname}:#{shared_path}/#{site}/private/ sites/#{site}/private")
         end
       end
     end
 
     desc 'Upload assets from <local>:files/ and <local>:private/ to <remote>:shared_path for each site'
-    task :upload do 
+    task :upload do
       on roles(:all) do |server|
         fetch(:drupal_sites).each do |site|
           puts "Uploading files of #{site} to #{server}"
-          system("sshpass -p#{server.password} rsync -rut --del -L -K --rsh='ssh -p #{server.port}' sites/#{site}/files/ #{server.user}@#{server.hostname}:#{shared_path}/#{site}/files")
-          system("sshpass -p#{server.password} rsync -rut --del -L -K --rsh='ssh -p #{server.port}' sites/#{site}/private/ #{server.user}@#{server.hostname}:#{shared_path}/#{site}/private")
+          system("sshpass -p#{server.password} rsync -rutv --del -L -K #{fetch(:drupal_rsync_exclude)} --rsh='ssh -p #{server.port}' sites/#{site}/files/ #{server.user}@#{server.hostname}:#{shared_path}/#{site}/files")
+          system("sshpass -p#{server.password} rsync -rutv --del -L -K #{fetch(:drupal_rsync_exclude)} --rsh='ssh -p #{server.port}' sites/#{site}/private/ #{server.user}@#{server.hostname}:#{shared_path}/#{site}/private")
         end
       end
     end
   end
+
 end
 
 # Set deploy hooks
