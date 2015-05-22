@@ -77,7 +77,22 @@ namespace :drupal do
     end
 
     desc 'Restore database for each site from dump in <remote>:release_path'
-    task :restore do 
+    task :restore do
+      set :confirmed, proc {
+        puts <<-WARN
+
+          ========================================================================
+                WARNING: You're about to overwrite production database
+          ========================================================================
+
+        WARN
+        ask :answer, "Are you sure you want to continue? Type 'yes'"
+        if fetch(:answer)== 'yes' then true else false end
+      }.call
+      unless fetch(:confirmed)
+        puts "\nCancelled!"
+        exit
+      end
       on roles(:all) do
         fetch(:drupal_sites).each do |site|
           if test("[ -f #{release_path}/#{site}.sql.gz ]")
@@ -99,7 +114,7 @@ namespace :drupal do
     end
 
     desc 'Upload database dumps from <local>:db/ to <remote>:release_path'
-    task :upload do 
+    task :upload do
       on roles(:all) do
         fetch(:drupal_sites).each do |site|
           upload! "db/#{site}.sql.gz", "#{release_path}/#{site}.sql.gz"
@@ -123,6 +138,21 @@ namespace :drupal do
 
     desc 'Upload assets from <local>:files/ and <local>:private/ to <remote>:shared_path for each site'
     task :upload do
+      set :confirmed, proc {
+        puts <<-WARN
+
+          ========================================================================
+                WARNING: You're about to overwrite production assets
+          ========================================================================
+
+        WARN
+        ask :answer, "Are you sure you want to continue? Type 'yes'"
+        if fetch(:answer)== 'yes' then true else false end
+      }.call
+      unless fetch(:confirmed)
+        puts "\nCancelled!"
+        exit
+      end
       on roles(:all) do |server|
         fetch(:drupal_sites).each do |site|
           puts "Uploading files of #{site} to #{server}"
